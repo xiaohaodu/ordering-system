@@ -1,0 +1,10 @@
+const expressJoi = require('@escook/express-joi')
+const express = require('express')
+const router = express.Router()
+const menu = require('../router_handler/menu')
+const { menu_schema } = require('../schema/menu')
+router.get('/menu/:id', expressJoi(menu_schema), menu.getMenu)
+router.get('/menus', menu.getMenus)
+router.post('/menu/:id', menu.addMenu)
+router.delete('/menu/:id', menu.subMenu)
+module.exports = router
