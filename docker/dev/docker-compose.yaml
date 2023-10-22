@@ -1,0 +1,51 @@
+services:
+  ordering-system-frontend:
+    image: nginx:stable-perl
+    ports:
+      - 9001:80
+    networks:
+      - ordering-system
+      - docker
+    container_name: ordering-system-frontend
+    depends_on:
+      - ordering-system-backend
+    volumes:
+      - "./nginx:/etc/nginx/conf.d"
+      - "./ordering-system-frontend:/etc/nginx/html"
+  ordering-system-backend:
+    image: duxiaohao/pm2:v1
+    ports:
+      - 9000:9000
+    container_name: ordering-system-backend
+    networks:
+      - ordering-system
+      - docker
+    volumes:
+      - ./ordering-system-backend:/ordering-system-backend
+    depends_on:
+      - ordering-system-mysql
+    working_dir: /ordering-system-backend
+    entrypoint: pm2-runtime start ecosystem.config.js
+  ordering-system-mysql:
+    image: mysql:oracle
+    ports:
+      - 3308:3306
+    container_name: ordering-system-mysql
+    restart: always
+    networks:
+      - ordering-system
+      - docker
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: 187139
+      MYSQL_DATABASE: ordering-system
+    volumes:
+      - "./mysql/conf:/etc/mysql/conf.d:rw"
+      - "./mysql/init:/docker-entrypoint-initdb.d:rw"
+networks:
+  ordering-system:
+    name: ordering-system
+    driver: bridge
+  docker:
+    name: docker
+    driver: bridge

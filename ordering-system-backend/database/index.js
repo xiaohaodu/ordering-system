@@ -1,10 +1,10 @@
 const mysql = require("mysql2");
 
 const db = mysql.createPool({
-  host: "127.0.0.1",
+  host: "ordering-system-mysql",
   user: "root",
   password: "187139",
-  database: "backend",
+  database: "ordering-system",
 });
 
 module.exports = db;

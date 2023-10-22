@@ -1,5 +1,6 @@
 const base = {
-  //   url: "https://os.api.mayuan.work",
-  url: "http://127.0.0.1:8100",
+  // url: "https://os.api.mayuan.work",
+  // url: "http://127.0.0.1:9000",
+  url: "api",
 };
 export default base;

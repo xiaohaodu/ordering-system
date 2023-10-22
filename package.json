@@ -1,0 +1,24 @@
+{
+  "name": "ordering-system",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "prod-deploy": "npm run build & npm run copy & npm run copy:prod ",
+    "dev-deploy": "npm run build & npm run copy & npm run copy:dev",
+    "build": "npm run build:f & npm run build:b",
+    "build:f": "node ./build/build.js -f",
+    "build:b": "node ./build/build.js -b",
+    "copy": "npm run copy:f & npm run copy:b",
+    "copy:f": "copyfiles -u 2 ordering-system-frontend/dist/**/* dist/ordering-system-frontend & copyfiles -u 2 ordering-system-frontend/nginx/**/* dist/nginx",
+    "copy:b": "copyfiles -u 2 ordering-system-backend/dist/**/* dist/ordering-system-backend",
+    "copy:prod": "copyfiles -u 2 docker/prod/**/* dist",
+    "copy:dev": "copyfiles -u 2 docker/dev/**/* dist"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1"
+  },
+  "dependencies": {
+    "chalk": "^5.3.0"
+  }
+}
