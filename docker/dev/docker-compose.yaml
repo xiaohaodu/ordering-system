@@ -1,12 +1,13 @@
 services:
   ordering-system-frontend:
     image: nginx:stable-perl
-    ports:
-      - 9001:80
+    # ports:
+    #   - 9001:80
     networks:
       - ordering-system
       - docker
     container_name: ordering-system-frontend
+    restart: always
     depends_on:
       - ordering-system-backend
     volumes:
@@ -14,9 +15,10 @@ services:
       - "./ordering-system-frontend:/etc/nginx/html"
   ordering-system-backend:
     image: duxiaohao/pm2:v1
-    ports:
-      - 9000:9000
+    # ports:
+    #   - 9000:9000
     container_name: ordering-system-backend
+    restart: always
     networks:
       - ordering-system
       - docker
@@ -28,8 +30,8 @@ services:
     entrypoint: pm2-runtime start ecosystem.config.js
   ordering-system-mysql:
     image: mysql:oracle
-    ports:
-      - 3308:3306
+    # ports:
+    #   - 3306:3306
     container_name: ordering-system-mysql
     restart: always
     networks:

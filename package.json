@@ -1,16 +1,24 @@
 {
   "name": "ordering-system",
+  "private": "true",
   "type": "module",
   "version": "1.0.0",
   "description": "",
+  "workspaces": {
+    "packages": [
+      "ordering-system-backend",
+      "ordering-system-frontend"
+    ]
+  },
   "scripts": {
-    "prod-deploy": "npm run build & npm run copy & npm run copy:prod ",
-    "dev-deploy": "npm run build & npm run copy & npm run copy:dev",
-    "build": "npm run build:f & npm run build:b",
-    "build:f": "node ./build/build.js -f",
-    "build:b": "node ./build/build.js -b",
-    "copy": "npm run copy:f & npm run copy:b",
-    "copy:f": "copyfiles -u 2 ordering-system-frontend/dist/**/* dist/ordering-system-frontend & copyfiles -u 2 ordering-system-frontend/nginx/**/* dist/nginx",
+    "dev": "pnpm --filter ordering-system-backend dev && pnpm --filter ordering-system-frontend dev",
+    "prod-deploy": "pnpm build && pnpm copy:prod ",
+    "dev-deploy": "pnpm build && pnpm copy:dev",
+    "build": "pnpm build:f && pnpm build:b",
+    "build:f": "pnpm --filter ordering-system-frontend build && pnpm copy:f",
+    "build:b": "pnpm --filter ordering-system-backend build && pnpm copy:b",
+    "copy": "pnpm copy:f && pnpm copy:b",
+    "copy:f": "copyfiles -u 2 ordering-system-frontend/dist/**/* dist/ordering-system-frontend && copyfiles -u 2 ordering-system-frontend/nginx/**/* dist/nginx",
     "copy:b": "copyfiles -u 2 ordering-system-backend/dist/**/* dist/ordering-system-backend",
     "copy:prod": "copyfiles -u 2 docker/prod/**/* dist",
     "copy:dev": "copyfiles -u 2 docker/dev/**/* dist"
@@ -20,5 +28,9 @@
   },
   "dependencies": {
     "chalk": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=16.20",
+    "pnpm": ">=7"
   }
 }

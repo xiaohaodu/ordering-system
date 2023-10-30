@@ -121,9 +121,9 @@ async function getOrder() {
     CompletedOrder.value.length = 0;
     for (const key in res.data) {
       if (res.data[key].finish == 1) {
-        CompletedOrder.value.push(res.data[key]);
+        CompletedOrder.value.push(res.data[key] as never);
       } else {
-        PendOrder.value.push(res.data[key]);
+        PendOrder.value.push(res.data[key] as never);
       }
     }
     // console.log(res.data);

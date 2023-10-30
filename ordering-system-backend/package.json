@@ -5,15 +5,14 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
-    "build": "ncc build app.js -o dist & npm run apidoc & npm run copy",
+    "build": "ncc build app.js -o dist && npm run apidoc && npm run copy",
     "apidoc": " apidoc -i router_handler -o  apidoc",
-    "copy": "copyfiles -u 1 ./build/ecosystem.config.js dist & copyfiles apidoc/**/* dist"
+    "copy": "copyfiles -u 1 ./build/ecosystem.config.js dist && copyfiles apidoc/**/* dist"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "apidoc": "^0.53.1",
     "axios": "^1.2.6",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
@@ -28,6 +27,7 @@
     "qs": "^6.11.0"
   },
   "devDependencies": {
+    "apidoc": "^0.53.1",
     "@escook/express-joi": "^1.1.1",
     "@vercel/ncc": "^0.38.0",
     "copyfiles": "^2.4.1",
