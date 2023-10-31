@@ -1,6 +1,7 @@
 name: deploy ordering-system-backend
 on:
   #监听push操作
+  workflow_dispatch:
   push:
     branches:
       - main
