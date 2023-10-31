@@ -5,9 +5,9 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
-    "build": "ncc build app.js -o dist && npm run apidoc && npm run copy",
+    "build": "ncc build app.js -o dist && pnpm apidoc && pnpm copy",
     "apidoc": " apidoc -i router_handler -o  apidoc",
-    "copy": "copyfiles -u 1 ./build/ecosystem.config.js dist && copyfiles apidoc/** dist"
+    "copy": "copyfiles -u 1 ./build/ecosystem.config.js dist && copyfiles ./apidoc/**/** dist && copyfiles ./apidoc/** dist"
   },
   "keywords": [],
   "author": "",
