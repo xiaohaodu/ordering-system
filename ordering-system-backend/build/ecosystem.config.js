@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "OrderingSystem", // app name
+      name: "ordering-system-backend", // app name
       script: "./index.js", // 启动执行文件
       watch: true,
       exec_mode: "cluster",
