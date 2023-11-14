@@ -27,6 +27,7 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@types/node": "^20.9.0",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-babel": "~5.0.0",
@@ -60,6 +61,11 @@
       "no-console": "off",
       "no-unused-vars": "off"
     }
+  },
+  "engines": {
+    "node": "16.20.2",
+    "npm": "8.19.4",
+    "pnpm": "8.8.0"
   },
   "browserslist": [
     "> 1%",

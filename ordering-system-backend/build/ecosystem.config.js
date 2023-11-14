@@ -7,6 +7,9 @@ module.exports = {
       exec_mode: "cluster",
       instances: "max",
       watch_delay: 1000, // 文件变化后，延迟重启时间
+      env: {
+        NODE_ENV: "production",
+      },
     },
   ],
 };

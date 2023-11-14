@@ -4,8 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js",
-    "build": "ncc build app.js -o dist && pnpm apidoc && pnpm copy",
+    "dev": "nodemon --exec cross-env NODE_ENV=development nodemon app.js",
+    "preview": "cross-env NODE_ENV=production node ./dist/index.js",
+    "build": " ncc build app.js -o dist && pnpm apidoc && pnpm copy",
     "apidoc": " apidoc -i router_handler -o  apidoc",
     "copy": "copyfiles -u 1 ./build/ecosystem.config.js dist && copyfiles ./apidoc/**/** dist && copyfiles ./apidoc/** dist"
   },
@@ -16,6 +17,7 @@
     "axios": "^1.2.6",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
     "express": "^4.18.1",
     "express-ws": "^5.0.2",
     "fs": "^0.0.1-security",
@@ -27,14 +29,15 @@
     "qs": "^6.11.0"
   },
   "devDependencies": {
-    "apidoc": "^0.53.1",
     "@escook/express-joi": "^1.1.1",
     "@vercel/ncc": "^0.38.0",
+    "apidoc": "^0.53.1",
     "copyfiles": "^2.4.1",
+    "cross-env": "^7.0.3",
     "express-jwt": "^7.7.5",
-    "nodemon": "^2.0.20",
     "joi": "^17.6.0",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "nodemon": "^2.0.20"
   },
   "apidoc": {
     "title": "接口文档",
