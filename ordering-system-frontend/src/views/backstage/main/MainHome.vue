@@ -57,14 +57,13 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, getCurrentInstance, onMounted } from "vue";
+import { reactive, ref, getCurrentInstance, onMounted, inject } from "vue";
 import NavigationBar from "@/components/NavigationBar.vue";
 import { useWebSocket } from "@/hooks/websocket";
 import { getOrder as netGetOrder } from "@/network/order/order";
 import { updateOrder } from "@/network/order/order";
 import QrCode from "@/views/frontdesk/QrCode.vue";
 import base from "@/network/base";
-let kk = ref(null);
 const drag = {
   top: 0,
   left: 0,
@@ -106,16 +105,15 @@ const PendOrder = ref([]);
 
 //已完成订单
 const CompletedOrder = ref([]);
-
-const { proxy } = getCurrentInstance() as any;
+const loading = inject("loading") as any;
+const elMessage = inject("elMessage") as any;
 async function getOrder() {
-  proxy.$loading();
+  loading();
   try {
     console.log(localStorage.user_id);
-
     const { data: res } = await netGetOrder(localStorage.user_id);
     if (res.status !== 0) {
-      proxy.$elMessage(res.message);
+      elMessage(res.message);
     }
     PendOrder.value.length = 0;
     CompletedOrder.value.length = 0;
@@ -130,9 +128,9 @@ async function getOrder() {
     // console.log(menu);
   } catch (error) {
     // console.log(error);
-    proxy.$elMessage(error);
+    elMessage(error);
   }
-  proxy.$loading().close();
+  loading().close();
 }
 
 const ws = useWebSocket(handleMessage);
@@ -150,7 +148,7 @@ function handleMessage(msg) {
   } else if (info.type == "server") {
     const _order = info.message.dish as [];
     PendOrder.value.push(..._order);
-    proxy.$elMessage("有新的订单！", "success", false);
+    elMessage("有新的订单！", "success", false);
     console.log(PendOrder.value);
   }
 }
@@ -168,10 +166,4 @@ const handleDelete = async (index, row) => {
 };
 </script>
 
-<style lang="scss" scoped>
-.pending-order {
-}
-
-.completed-order {
-}
-</style>
+<style lang="scss" scoped></style>
