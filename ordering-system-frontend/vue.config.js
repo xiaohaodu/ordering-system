@@ -5,4 +5,14 @@ module.exports = defineConfig({
   devServer: {
     port: 9010,
   },
+  configureWebpack: {
+    plugins: [
+      require("unplugin-vue-components/webpack").default({
+        /* options */
+      }),
+      require("unplugin-auto-import/webpack").default({
+        /* options */
+      }),
+    ],
+  },
 });
