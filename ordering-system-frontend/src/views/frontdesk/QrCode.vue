@@ -16,7 +16,9 @@
       :parser="
         (va) => {
           const value = parseInt(va);
-          if (value <= 0 || value > 50) {
+          if (isNaN(value)) {
+            return '0';
+          } else if (value <= 0 || value > 50) {
             return '0';
           } else {
             return value.toString();
@@ -77,7 +79,7 @@ const elMessage = inject("elMessage") as any;
  * @argument qrText       二维码中间显示文字
  * @argument qrTextSize   二维码中间显示文字大小(默认16px)
  */
-const handleQrcode = async (qrParams) => {
+const handleQrcode = async (qrParams: number): Promise<void> => {
   if (!(qrParams && canvas.value)) {
     return;
   }
@@ -87,28 +89,32 @@ const handleQrcode = async (qrParams) => {
       props.qrUrl + "/" + qrParams,
       qrCodeOption
     );
+
     // 画二维码里的logo// 在canvas里进行拼接
     const ctx = dom.getContext("2d") as CanvasRenderingContext2D;
     const image = new Image();
     image.src = url;
-    ctx.drawImage(
-      image,
-      (props.width - props.qrSize) / 2,
-      0,
-      props.qrSize,
-      props.qrSize
-    );
-    if (props.qrText) {
-      //设置字体
-      ctx.font = "bold " + props.qrTextSize + "px Arial";
-      let tw = ctx.measureText(props.qrText + props.qrParams).width; // 文字真实宽度
-      let ftop = props.qrSize - props.qrTextSize; // 根据字体大小计算文字top
-      let fleft = (props.width - tw) / 2; // 根据字体大小计算文字left
-      ctx.fillStyle = "#fff";
-      ctx.textBaseline = "top"; //设置绘制文本时的文本基线。
-      ctx.fillStyle = "#333";
-      ctx.fillText(props.qrText + props.qrParams, fleft, ftop);
-    }
+
+    image.onload = () => {
+      ctx.drawImage(
+        image,
+        (props.width - props.qrSize) / 2,
+        0,
+        props.qrSize,
+        props.qrSize
+      );
+      if (props.qrText) {
+        //设置字体
+        ctx.font = "bold " + props.qrTextSize + "px Arial";
+        let tw = ctx.measureText(props.qrText + props.qrParams).width; // 文字真实宽度
+        let ftop = props.qrSize - props.qrTextSize; // 根据字体大小计算文字top
+        let fleft = (props.width - tw) / 2; // 根据字体大小计算文字left
+        ctx.fillStyle = "#fff";
+        ctx.textBaseline = "top"; //设置绘制文本时的文本基线。
+        ctx.fillStyle = "#333";
+        ctx.fillText(props.qrText + props.qrParams, fleft, ftop);
+      }
+    };
   } catch (err) {
     console.log(err);
     elMessage("二维码更新失败");
