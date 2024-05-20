@@ -6,8 +6,6 @@
 export const useDebounce = (fn: Function, t: number = 1000) => {
   let timeout: number;
   return function (...args: Array<any>) {
-    console.log(3);
-
     if (timeout) {
       clearTimeout(timeout);
     }

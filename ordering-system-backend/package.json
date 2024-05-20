@@ -8,7 +8,7 @@
     "preview": "cross-env NODE_ENV=production node ./dist/index.js",
     "build": " ncc build app.js -o dist && pnpm apidoc && pnpm copy",
     "apidoc": " apidoc -i router_handler -o  apidoc",
-    "copy": "copyfiles -u 1 ./build/ecosystem.config.js dist && copyfiles ./apidoc/**/** dist && copyfiles ./apidoc/** dist"
+    "copy": "copyfiles -u 1 ./build/ecosystem.config.js dist && copyfiles ./apidoc/**/** dist && copyfiles ./apidoc/** dist && copyfiles ./certs/**/* dist"
   },
   "keywords": [],
   "author": "",

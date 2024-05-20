@@ -1,8 +1,10 @@
 export function useWebSocket(handleMessage) {
+  console.log(process.env.NODE_ENV);
+
   const ws =
     process.env.NODE_ENV === "production"
       ? new WebSocket(`wss://os.api.mayuan.work/ws`)
-      : new WebSocket(`ws://127.0.0.1:9000/ws`);
+      : new WebSocket(`wss://127.0.0.1:9000/ws`);
   let webSocketState: boolean;
   const init = () => {
     bindEvent();

@@ -3,7 +3,8 @@ const joi = require("joi");
 const cors = require("cors");
 const morgan = require("morgan");
 const app = express();
-
+const https = require("https");
+const fs = require("fs");
 app.use(cors());
 app.use(express.json({ limit: 10 * 1024 * 1024 }));
 app.use(express.urlencoded({ extended: true, limit: 10 * 1024 * 1024 }));
@@ -31,7 +32,19 @@ app.use(
 );
 app.use(express.urlencoded({ extended: false }));
 const expressWs = require("express-ws");
-const wsInstance = expressWs(app);
+
+const server = https.createServer(
+  {
+    cert: fs.readFileSync(
+      "./certs/os.api.mayuan.work_nginx/os.api.mayuan.work_bundle.crt"
+    ), // 指定证书文件路径
+    key: fs.readFileSync(
+      "./certs/os.api.mayuan.work_nginx/os.api.mayuan.work.key"
+    ), // 指定私钥文件路径
+  },
+  app
+);
+const wsInstance = expressWs(app, server);
 module.exports = wsInstance;
 
 app.use("/apidoc", express.static("apidoc"));
@@ -55,6 +68,6 @@ app.use((err, req, res, next) => {
   res.my_send(err);
 });
 
-app.listen(9000, () => {
-  console.log("api server running at http://127.0.0.1:9000");
+server.listen(9000, () => {
+  console.log("api server running at https://127.0.0.1:9000");
 });
