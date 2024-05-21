@@ -25,6 +25,7 @@ export function useWebSocket(handleMessage) {
   }
   function handleClose(e) {
     console.log("WebSocket close", e);
+    waitingServer();
   }
   function handleError(e) {
     console.log("WebSocket error", e);
@@ -38,6 +39,9 @@ export function useWebSocket(handleMessage) {
       waitingServer();
     }, time);
   }
+  /**
+   * @description 断线重连
+   */
   function waitingServer() {
     webSocketState = false; //在线状态
     setTimeout(() => {
