@@ -23,7 +23,7 @@ jobs:
           run_install: true
       - name: Run build task
         run: pnpm build:f
-      - name: Deploy to Server html
+      - name: Deploy to aliyun cloud server html
         uses: easingthemes/ssh-deploy@v4.1.8
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
@@ -32,12 +32,30 @@ jobs:
           REMOTE_HOST: "182.92.222.231"
           REMOTE_USER: root
           TARGET: /home/ordering-system/ordering-system-frontend
-      - name: Deploy to Server nginx config
+      - name: Deploy to aliyun cloud server nginx config
         uses: easingthemes/ssh-deploy@v4.1.8
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
           ARGS: "-rltgoDzvO --delete"
           SOURCE: ordering-system-frontend/nginx/
           REMOTE_HOST: "182.92.222.231"
+          REMOTE_USER: root
+          TARGET: /home/ordering-system/nginx
+      - name: Deploy to tencent cloud server html
+        uses: easingthemes/ssh-deploy@v4.1.8
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: ordering-system-frontend/dist/
+          REMOTE_HOST: "62.234.163.223"
+          REMOTE_USER: root
+          TARGET: /home/ordering-system/ordering-system-frontend
+      - name: Deploy to tencent cloud server nginx config
+        uses: easingthemes/ssh-deploy@v4.1.8
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: ordering-system-frontend/nginx/
+          REMOTE_HOST: "62.234.163.223"
           REMOTE_USER: root
           TARGET: /home/ordering-system/nginx

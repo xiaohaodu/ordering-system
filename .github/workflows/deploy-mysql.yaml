@@ -12,12 +12,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
-      - name: Deploy to Server mysql
+      - name: Deploy to aliyun cloud server mysql
         uses: easingthemes/ssh-deploy@v4.1.8
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
           ARGS: "-rltgoDzvO --delete"
           SOURCE: mysql/
           REMOTE_HOST: "182.92.222.231"
+          REMOTE_USER: root
+          TARGET: /home/ordering-system/mysql
+      - name: Deploy to tencent cloud server mysql
+        uses: easingthemes/ssh-deploy@v4.1.8
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: mysql/
+          REMOTE_HOST: "62.234.163.223"
           REMOTE_USER: root
           TARGET: /home/ordering-system/mysql
