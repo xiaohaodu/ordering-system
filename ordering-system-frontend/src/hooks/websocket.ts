@@ -1,61 +1,84 @@
 export function useWebSocket(handleMessage) {
-  console.log(process.env.NODE_ENV);
+  console.log(process.env.NODE_ENV); // 可以考虑使用更安全的日志级别
 
-  const ws =
+  const wsUrl =
     process.env.NODE_ENV === "production"
-      ? new WebSocket(`wss://os.api.mayuan.work/ws`)
-      : new WebSocket(`wss://127.0.0.1:9000/ws`);
-  let webSocketState: boolean;
-  const init = () => {
-    bindEvent();
-  };
+      ? "wss://os.api.mayuan.work/ws"
+      : "wss://127.0.0.1:9000/ws";
+  let ws = new WebSocket(wsUrl);
+  let webSocketState = false;
   const heartBeat = {
     time: 5000,
     timeout: 2000,
   };
+  const maxAttempts = 5; // 最大重连次数
+  let attempts = 0; // 当前重连尝试次数
 
   function bindEvent() {
-    ws.addEventListener("open", handleOpen, false);
-    ws.addEventListener("close", handleClose, false);
-    ws.addEventListener("error", handleError, false);
-    ws.addEventListener("message", handleMessage, false);
+    ws.addEventListener("open", handleOpen);
+    ws.addEventListener("close", handleClose);
+    ws.addEventListener("error", handleError);
+    ws.addEventListener("message", handleMessage);
   }
-  function handleOpen(e) {
-    console.log("WebSocket open", e);
+
+  function handleOpen() {
+    console.log("WebSocket open");
+    webSocketState = true;
+    startHeartBeat(heartBeat.time);
   }
-  function handleClose(e) {
-    console.log("WebSocket close", e);
+
+  function handleClose() {
+    console.log("WebSocket close");
+    webSocketState = false;
+    attempts = 0; // 重置重连次数
     waitingServer();
   }
-  function handleError(e) {
-    console.log("WebSocket error", e);
+
+  function handleError() {
+    console.log("WebSocket error");
+    webSocketState = false;
+    attempts = 0; // 重置重连次数
+    waitingServer();
   }
-  /*
-   * 心跳初始函数
-   * @param time：心跳时间间隔
-   */
+
   function startHeartBeat(time) {
     setTimeout(() => {
-      waitingServer();
+      if (webSocketState) {
+        ws.send(JSON.stringify({ type: "heartbeat" }));
+        startHeartBeat(heartBeat.time);
+      } else {
+        waitingServer();
+      }
     }, time);
   }
-  /**
-   * @description 断线重连
-   */
+
   function waitingServer() {
-    webSocketState = false; //在线状态
     setTimeout(() => {
-      if (webSocketState) {
-        startHeartBeat(heartBeat.time);
-        return;
+      if (!webSocketState) {
+        console.log("心跳无响应，已断线");
+        // 检查是否超过了最大重连次数
+        if (maxAttempts > 0 && attempts >= maxAttempts) {
+          console.log("Max reconnection attempts reached, giving up.");
+          return;
+        }
+        reconnect();
       }
-      console.log("心跳无响应，已断线");
-      close();
-      //重连操作
     }, heartBeat.timeout);
   }
 
-  init();
+  function reconnect() {
+    console.log(`Reconnecting attempt ${attempts + 1}...`);
+    ws.close(); // 关闭旧连接
+    ws = new WebSocket(wsUrl); // 创建新连接
+    bindEvent(); // 重新绑定事件
+    // 设置延迟时间，例如首次尝试后等待1秒，第二次2秒，第三次4秒等
+    setTimeout(
+      () => ws.send(JSON.stringify({ type: "heartbeat" })),
+      Math.pow(2, attempts++) * 1000
+    );
+  }
 
-  return ws;
+  bindEvent();
+
+  return ws; // 返回WebSocket实例
 }

@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, getCurrentInstance, onMounted, inject } from "vue";
+import { ref, onMounted, inject } from "vue";
 import NavigationBar from "@/components/NavigationBar.vue";
 import { useWebSocket } from "@/hooks/websocket";
 import { getOrder as netGetOrder } from "@/network/order/order";

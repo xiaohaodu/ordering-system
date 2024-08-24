@@ -119,47 +119,63 @@ exports.submitOrder = (req, res) => {
  * @apiDescription 具体使用请联系后端人员
  */
 exports.wsSubmitOrder = (ws, req) => {
-  // console.log(wsInstance.getWss().clients);
+  // 向客户端发送身份验证请求
   ws.send(
     JSON.stringify({
       type: "auth",
       isMessage: false,
-      tip: "Please return your identification information",
+      tip: "请返回您的身份信息",
     })
   );
+
   ws.on("message", (msg) => {
-    const info = JSON.parse(msg);
-    ws["type"] = info.type;
-    if (info.isMessage) {
-      if (info.type == "mobile") {
-        ws["table_number"] = info.table_number;
-        // wsInstance.getWss().clients[0]
-        // console.log(wsInstance.getWss().clients);
-        // console.log(info.message.dish);
-        for (const key in info.message.dish) {
-          // console.log(key);
-          wsInstance.getWss().clients.forEach((element) => {
-            // 如果遍历到的客户端的user和info中的to相同 则发送信息给该客户端
-            // console.log(element['type']);
-            if (
-              element["type"] == "pc" &&
-              element["id"] == info.message.dish[key].master_id
-            ) {
-              element.send(
-                JSON.stringify({
-                  type: "server",
-                  isMessage: true,
-                  message: info.message,
-                })
-              );
-              // console.log(info.message);
-            }
+    try {
+      const info = JSON.parse(msg);
+
+      if (!info.isMessage && info.type === "pc") {
+        // 保存PC客户端的ID
+        ws.id = info.id;
+      }
+
+      if (info.isMessage) {
+        if (info.type === "mobile") {
+          // 保存桌号并处理订单消息
+          ws.table_number = info.table_number;
+
+          // 将订单消息转发给对应的PC客户端
+          const dishes = info.message.dish;
+          Object.keys(dishes).forEach((dishKey) => {
+            const dish = dishes[dishKey];
+            wsInstance.getWss().clients.forEach((client) => {
+              if (
+                client.type === "pc" &&
+                client.id === dish.master_id &&
+                client.readyState === WebSocket.OPEN
+              ) {
+                try {
+                  client.send(
+                    JSON.stringify({
+                      type: "server",
+                      isMessage: true,
+                      message: info.message,
+                    })
+                  );
+                } catch (sendError) {
+                  console.error("发送消息时出错:", sendError);
+                }
+              }
+            });
           });
         }
-      } else if (info.type == "pc") {
       }
-    } else if (info.type == "pc") {
-      ws["id"] = info.id;
+    } catch (parseError) {
+      console.error("解析消息时出错:", parseError);
     }
+  });
+
+  // 断开连接时清理资源
+  ws.on("close", () => {
+    delete ws.table_number;
+    delete ws.id;
   });
 };
