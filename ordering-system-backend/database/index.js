@@ -13,7 +13,7 @@ const DBBuilder = () => {
       host: "127.0.0.1",
       user: "root",
       password: "187139",
-      database: "backend",
+      database: "ordering-system",
     });
   }
 };
