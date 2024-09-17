@@ -85,10 +85,8 @@ const handleQrcode = async (qrParams: number): Promise<void> => {
   }
   let dom = canvas.value as HTMLCanvasElement;
   try {
-    const url = await QRCode.toDataURL(
-      props.qrUrl + "/" + qrParams,
-      qrCodeOption
-    );
+    const url = await QRCode.toDataURL(props.qrUrl + qrParams, qrCodeOption);
+    console.log(url);
 
     // 画二维码里的logo// 在canvas里进行拼接
     const ctx = dom.getContext("2d") as CanvasRenderingContext2D;
