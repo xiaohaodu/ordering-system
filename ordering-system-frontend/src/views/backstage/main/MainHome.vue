@@ -67,11 +67,19 @@ import base from "@/network/base";
 const drag = {
   top: 0,
   left: 0,
-  dragEventStart: (dragEvent) => {
+  dragEventStart: (dragEvent: { offsetY: number; offsetX: number }) => {
     drag.top = dragEvent.offsetY;
     drag.left = dragEvent.offsetX;
   },
-  dragEventEnd: (dragEvent) => {
+  dragEventEnd: (dragEvent: {
+    offsetY: number;
+    offsetX: number;
+    target: {
+      style: { top: string; left: string };
+      offsetTop: number;
+      offsetLeft: number;
+    };
+  }) => {
     drag.top = dragEvent.offsetY - drag.top;
     drag.left = dragEvent.offsetX - drag.left;
     dragEvent.target.style.top = dragEvent.target.offsetTop + drag.top + "px";
@@ -149,26 +157,31 @@ onBeforeUnmount(() => {
 });
 
 const ws = useWebSocket(handleMessage);
-function handleMessage(msg) {
+function handleMessage(msg: { data: string }) {
   const info = JSON.parse(msg.data);
-  if (info.type == "auth") {
-    return ws.send(
-      JSON.stringify({
-        type: "pc",
-        id: localStorage.user_id,
-        isMessage: false,
-        tip: "这是客户端",
-      })
-    );
-  } else if (info.type == "server") {
-    const _order = info.message.dish as [];
-    PendOrder.value.push(..._order);
-    elMessage("有新的订单！", "success", false);
-    console.log(PendOrder.value);
+  // 检查WebSocket连接状态是否为OPEN
+  if (ws.readyState === WebSocket.OPEN) {
+    if (info.type == "auth") {
+      return ws.send(
+        JSON.stringify({
+          type: "pc",
+          id: localStorage.user_id,
+          isMessage: false,
+          tip: "这是客户端",
+        })
+      );
+    } else if (info.type == "server") {
+      const _order = info.message.dish as [];
+      PendOrder.value.push(..._order);
+      elMessage("有新的订单！", "success", false);
+      console.log(PendOrder.value);
+    }
+  } else {
+    setTimeout(handleMessage, 100);
   }
 }
 
-const handleDelete = async (index, row) => {
+const handleDelete = async (index: number, row: any) => {
   // console.log(index, row)
   try {
     CompletedOrder.value.push(PendOrder.value[index]);
