@@ -150,9 +150,9 @@ onBeforeUnmount(() => {
 
 const ws = useWebSocket(handleMessage);
 function handleMessage(msg) {
-  const info = JSON.parse(msg.data);
   // 检查WebSocket连接状态是否为OPEN
   if (ws.readyState === WebSocket.OPEN) {
+    const info = JSON.parse(msg.data);
     if (info.type == "auth") {
       return ws.send(
         JSON.stringify({
@@ -169,7 +169,7 @@ function handleMessage(msg) {
       console.log(PendOrder.value);
     }
   } else {
-    setTimeout(handleMessage, 100);
+    setTimeout(handleMessage.bind(msg), 100);
   }
 }
 

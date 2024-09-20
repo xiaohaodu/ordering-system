@@ -97,16 +97,21 @@ async function submitOrder() {
 const ws = useWebSocket(handleMessage);
 
 function handleMessage(msg) {
-  const info = JSON.parse(msg.data);
-  if (info.type == "auth") {
-    return ws.send(
-      JSON.stringify({
-        type: "mobile",
-        table_number: route.params.table_number,
-        isMessage: false,
-        tip: "这是服务端",
-      })
-    );
+  // 检查WebSocket连接状态是否为OPEN
+  if (ws.readyState === WebSocket.OPEN) {
+    const info = JSON.parse(msg.data);
+    if (info.type == "auth") {
+      return ws.send(
+        JSON.stringify({
+          type: "mobile",
+          table_number: route.params.table_number,
+          isMessage: false,
+          tip: "这是服务端",
+        })
+      );
+    }
+  } else {
+    setTimeout(handleMessage.bind(msg), 100);
   }
 }
 
