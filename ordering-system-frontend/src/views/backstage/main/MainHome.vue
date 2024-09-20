@@ -67,19 +67,11 @@ import base from "@/network/base";
 const drag = {
   top: 0,
   left: 0,
-  dragEventStart: (dragEvent: { offsetY: number; offsetX: number }) => {
+  dragEventStart: (dragEvent) => {
     drag.top = dragEvent.offsetY;
     drag.left = dragEvent.offsetX;
   },
-  dragEventEnd: (dragEvent: {
-    offsetY: number;
-    offsetX: number;
-    target: {
-      style: { top: string; left: string };
-      offsetTop: number;
-      offsetLeft: number;
-    };
-  }) => {
+  dragEventEnd: (dragEvent) => {
     drag.top = dragEvent.offsetY - drag.top;
     drag.left = dragEvent.offsetX - drag.left;
     dragEvent.target.style.top = dragEvent.target.offsetTop + drag.top + "px";
@@ -157,7 +149,7 @@ onBeforeUnmount(() => {
 });
 
 const ws = useWebSocket(handleMessage);
-function handleMessage(msg: { data: string }) {
+function handleMessage(msg) {
   const info = JSON.parse(msg.data);
   // 检查WebSocket连接状态是否为OPEN
   if (ws.readyState === WebSocket.OPEN) {
