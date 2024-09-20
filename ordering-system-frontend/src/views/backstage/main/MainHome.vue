@@ -169,7 +169,7 @@ function handleMessage(msg) {
       console.log(PendOrder.value);
     }
   } else {
-    setTimeout(handleMessage.bind(msg), 100);
+    setTimeout(handleMessage.bind(msg), 1000);
   }
 }
 
