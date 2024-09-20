@@ -107,10 +107,9 @@ const PendOrder = ref([]);
 const CompletedOrder = ref([]);
 const loading = inject("loading") as any;
 const elMessage = inject("elMessage") as any;
-async function getOrder() {
-  loading();
+async function getOrder(first = false) {
+  first && loading();
   try {
-    console.log(localStorage.user_id);
     const { data: res } = await netGetOrder(localStorage.user_id);
     if (res.status !== 0) {
       elMessage(res.message);
@@ -130,7 +129,7 @@ async function getOrder() {
     // console.log(error);
     elMessage(error);
   }
-  loading().close();
+  first && loading().close();
 }
 
 const timer = ref<{
@@ -139,7 +138,7 @@ const timer = ref<{
   timerInterval: 0,
 });
 const init = () => {
-  getOrder();
+  getOrder(true);
   timer.value.timerInterval = window.setInterval(getOrder, 2000);
 };
 onMounted(() => {
