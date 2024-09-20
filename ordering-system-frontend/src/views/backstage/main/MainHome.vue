@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, onBeforeUnmount } from "vue";
 import NavigationBar from "@/components/NavigationBar.vue";
 import { useWebSocket } from "@/hooks/websocket";
 import { getOrder as netGetOrder } from "@/network/order/order";
@@ -132,6 +132,22 @@ async function getOrder() {
   }
   loading().close();
 }
+
+const timer = ref<{
+  timerInterval: number;
+}>({
+  timerInterval: 0,
+});
+const init = () => {
+  getOrder();
+  timer.value.timerInterval = window.setInterval(getOrder, 2000);
+};
+onMounted(() => {
+  init();
+});
+onBeforeUnmount(() => {
+  clearInterval(timer.value.timerInterval);
+});
 
 const ws = useWebSocket(handleMessage);
 function handleMessage(msg) {
